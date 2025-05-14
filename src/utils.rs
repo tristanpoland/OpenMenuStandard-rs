@@ -2,15 +2,15 @@
 //
 // Utility functions for working with OMS documents
 
-use crate::{OMS_VERSION, OmsError, OmsResult};
-use crate::types::*;
 use crate::document::parse_oms_document;
+use crate::types::*;
 use crate::url::parse_oms_url;
+use crate::{OmsError, OmsResult, OMS_VERSION};
 use chrono::Utc;
 use std::collections::HashMap;
-use std::path::Path;
 use std::fs;
 use std::io::{Read, Write};
+use std::path::Path;
 
 /// Create a minimal OMS document with basic fields
 pub fn create_minimal_document(
@@ -26,7 +26,7 @@ pub fn create_minimal_document(
         source: "open_menu_standard".to_string(),
         locale: "en-US".to_string(),
     };
-    
+
     let vendor = Vendor {
         id: vendor_id.to_string(),
         name: vendor_name.to_string(),
@@ -39,7 +39,7 @@ pub fn create_minimal_document(
         cuisine: None,
         services: None,
     };
-    
+
     let item = Item {
         id: item_id.to_string(),
         name: item_name.to_string(),
@@ -60,7 +60,7 @@ pub fn create_minimal_document(
         availability: None,
         popularity: None,
     };
-    
+
     let document = OmsDocument::new(metadata, vendor, vec![item]);
     document.validate()?;
     Ok(document)
@@ -85,7 +85,7 @@ fn create_restaurant_template() -> OmsResult<OmsDocument> {
         source: "open_menu_standard".to_string(),
         locale: "en-US".to_string(),
     };
-    
+
     let vendor = Vendor {
         id: "restaurant-template".to_string(),
         name: "Restaurant Template".to_string(),
@@ -98,7 +98,7 @@ fn create_restaurant_template() -> OmsResult<OmsDocument> {
         cuisine: None,
         services: None,
     };
-    
+
     // Create a customization for cooking preference
     let cooking_pref = Customization {
         id: "cooking-pref".to_string(),
@@ -156,7 +156,7 @@ fn create_restaurant_template() -> OmsResult<OmsDocument> {
             },
         ]),
     };
-    
+
     // Create a customization for sides
     let sides = Customization {
         id: "side".to_string(),
@@ -198,7 +198,7 @@ fn create_restaurant_template() -> OmsResult<OmsDocument> {
             },
         ]),
     };
-    
+
     // Create an item
     let steak = Item {
         id: "steak".to_string(),
@@ -220,7 +220,7 @@ fn create_restaurant_template() -> OmsResult<OmsDocument> {
         availability: None,
         popularity: None,
     };
-    
+
     Ok(OmsDocument::new(metadata, vendor, vec![steak]))
 }
 
@@ -231,7 +231,7 @@ fn create_cafe_template() -> OmsResult<OmsDocument> {
         source: "open_menu_standard".to_string(),
         locale: "en-US".to_string(),
     };
-    
+
     let vendor = Vendor {
         id: "cafe-template".to_string(),
         name: "Cafe Template".to_string(),
@@ -244,7 +244,7 @@ fn create_cafe_template() -> OmsResult<OmsDocument> {
         cuisine: None,
         services: None,
     };
-    
+
     // Create a customization for bread type
     let bread = Customization {
         id: "bread".to_string(),
@@ -286,7 +286,7 @@ fn create_cafe_template() -> OmsResult<OmsDocument> {
             },
         ]),
     };
-    
+
     // Create a customization for cheese
     let cheese = Customization {
         id: "cheese".to_string(),
@@ -328,14 +328,17 @@ fn create_cafe_template() -> OmsResult<OmsDocument> {
             },
         ]),
     };
-    
+
     // Create an item
     let sandwich = Item {
         id: "turkey-sandwich".to_string(),
         name: "Turkey Sandwich".to_string(),
         category: "sandwich".to_string(),
         vendor_id: None,
-        description: Some("Roasted turkey breast with lettuce, tomato, and choice of cheese and bread".to_string()),
+        description: Some(
+            "Roasted turkey breast with lettuce, tomato, and choice of cheese and bread"
+                .to_string(),
+        ),
         subcategory: None,
         image_url: None,
         base_price: Some(8.99),
@@ -350,7 +353,7 @@ fn create_cafe_template() -> OmsResult<OmsDocument> {
         availability: None,
         popularity: None,
     };
-    
+
     Ok(OmsDocument::new(metadata, vendor, vec![sandwich]))
 }
 
@@ -361,7 +364,7 @@ fn create_fast_food_template() -> OmsResult<OmsDocument> {
         source: "open_menu_standard".to_string(),
         locale: "en-US".to_string(),
     };
-    
+
     let vendor = Vendor {
         id: "fast-food-template".to_string(),
         name: "Fast Food Template".to_string(),
@@ -374,14 +377,16 @@ fn create_fast_food_template() -> OmsResult<OmsDocument> {
         cuisine: None,
         services: None,
     };
-    
+
     // Create a combo meal with components
     let burger = Item {
         id: "burger".to_string(),
         name: "Cheeseburger".to_string(),
         category: "burger".to_string(),
         vendor_id: None,
-        description: Some("Quarter-pound beef patty with cheese, lettuce, tomato, and special sauce".to_string()),
+        description: Some(
+            "Quarter-pound beef patty with cheese, lettuce, tomato, and special sauce".to_string(),
+        ),
         subcategory: None,
         image_url: None,
         base_price: Some(4.99),
@@ -396,7 +401,7 @@ fn create_fast_food_template() -> OmsResult<OmsDocument> {
         availability: None,
         popularity: None,
     };
-    
+
     // Create drink customization
     let drink = Customization {
         id: "drink".to_string(),
@@ -438,7 +443,7 @@ fn create_fast_food_template() -> OmsResult<OmsDocument> {
             },
         ]),
     };
-    
+
     // Create side customization
     let side = Customization {
         id: "side".to_string(),
@@ -472,7 +477,7 @@ fn create_fast_food_template() -> OmsResult<OmsDocument> {
             },
         ]),
     };
-    
+
     // Create an item with components
     let combo = Item {
         id: "combo".to_string(),
@@ -494,7 +499,7 @@ fn create_fast_food_template() -> OmsResult<OmsDocument> {
         availability: None,
         popularity: None,
     };
-    
+
     Ok(OmsDocument::new(metadata, vendor, vec![combo]))
 }
 
@@ -505,7 +510,7 @@ fn create_coffee_shop_template() -> OmsResult<OmsDocument> {
         source: "open_menu_standard".to_string(),
         locale: "en-US".to_string(),
     };
-    
+
     let vendor = Vendor {
         id: "coffee-shop-template".to_string(),
         name: "Coffee Shop Template".to_string(),
@@ -518,7 +523,7 @@ fn create_coffee_shop_template() -> OmsResult<OmsDocument> {
         cuisine: None,
         services: None,
     };
-    
+
     // Create size customization
     let size = Customization {
         id: "size".to_string(),
@@ -560,7 +565,7 @@ fn create_coffee_shop_template() -> OmsResult<OmsDocument> {
             },
         ]),
     };
-    
+
     // Create milk customization
     let milk = Customization {
         id: "milk".to_string(),
@@ -610,7 +615,7 @@ fn create_coffee_shop_template() -> OmsResult<OmsDocument> {
             },
         ]),
     };
-    
+
     // Create espresso shots customization
     let shots = Customization {
         id: "shots".to_string(),
@@ -627,7 +632,7 @@ fn create_coffee_shop_template() -> OmsResult<OmsDocument> {
         unit_nutrition_adjustments: None,
         options: None,
     };
-    
+
     // Create flavor customization
     let flavor = Customization {
         id: "flavor".to_string(),
@@ -669,7 +674,7 @@ fn create_coffee_shop_template() -> OmsResult<OmsDocument> {
             },
         ]),
     };
-    
+
     // Create latte item
     let latte = Item {
         id: "latte".to_string(),
@@ -682,7 +687,12 @@ fn create_coffee_shop_template() -> OmsResult<OmsDocument> {
         base_price: Some(4.50),
         currency: Some("USD".to_string()),
         nutrition: None,
-        customizations: Some(vec![size.clone(), milk.clone(), shots.clone(), flavor.clone()]),
+        customizations: Some(vec![
+            size.clone(),
+            milk.clone(),
+            shots.clone(),
+            flavor.clone(),
+        ]),
         selected_customizations: None,
         quantity: None,
         item_note: None,
@@ -691,7 +701,7 @@ fn create_coffee_shop_template() -> OmsResult<OmsDocument> {
         availability: None,
         popularity: None,
     };
-    
+
     // Create cappuccino item
     let cappuccino = Item {
         id: "cappuccino".to_string(),
@@ -713,7 +723,7 @@ fn create_coffee_shop_template() -> OmsResult<OmsDocument> {
         availability: None,
         popularity: None,
     };
-    
+
     Ok(OmsDocument::new(metadata, vendor, vec![latte, cappuccino]))
 }
 
@@ -724,7 +734,7 @@ fn create_pizzeria_template() -> OmsResult<OmsDocument> {
         source: "open_menu_standard".to_string(),
         locale: "en-US".to_string(),
     };
-    
+
     let vendor = Vendor {
         id: "pizzeria-template".to_string(),
         name: "Pizzeria Template".to_string(),
@@ -737,7 +747,7 @@ fn create_pizzeria_template() -> OmsResult<OmsDocument> {
         cuisine: None,
         services: None,
     };
-    
+
     // Create size customization
     let size = Customization {
         id: "size".to_string(),
@@ -787,7 +797,7 @@ fn create_pizzeria_template() -> OmsResult<OmsDocument> {
             },
         ]),
     };
-    
+
     // Create crust customization
     let crust = Customization {
         id: "crust".to_string(),
@@ -837,7 +847,7 @@ fn create_pizzeria_template() -> OmsResult<OmsDocument> {
             },
         ]),
     };
-    
+
     // Create toppings customization
     let toppings = Customization {
         id: "toppings".to_string(),
@@ -903,7 +913,7 @@ fn create_pizzeria_template() -> OmsResult<OmsDocument> {
             },
         ]),
     };
-    
+
     // Create pizza item
     let pizza = Item {
         id: "cheese-pizza".to_string(),
@@ -925,7 +935,7 @@ fn create_pizzeria_template() -> OmsResult<OmsDocument> {
         availability: None,
         popularity: None,
     };
-    
+
     Ok(OmsDocument::new(metadata, vendor, vec![pizza]))
 }
 
@@ -950,21 +960,19 @@ pub fn calculate_price_adjustments(
     selected: &[SelectedCustomization],
 ) -> OmsResult<f64> {
     let mut total_adjustment = 0.0;
-    
+
     if let Some(customizations) = &item.customizations {
         // Create a map of customizations for easy lookup
-        let customization_map: HashMap<&str, &Customization> = customizations
-            .iter()
-            .map(|c| (c.id.as_str(), c))
-            .collect();
-        
+        let customization_map: HashMap<&str, &Customization> =
+            customizations.iter().map(|c| (c.id.as_str(), c)).collect();
+
         // Process each selected customization
         for selection in selected {
             let customization = match customization_map.get(selection.customization_id.as_str()) {
                 Some(c) => c,
                 None => continue, // Skip unknown customizations
             };
-            
+
             match &customization.r#type {
                 CustomizationType::SingleSelect => {
                     if let CustomizationSelection::String(selected_id) = &selection.selection {
@@ -979,9 +987,10 @@ pub fn calculate_price_adjustments(
                             }
                         }
                     }
-                },
+                }
                 CustomizationType::MultiSelect => {
-                    if let CustomizationSelection::StringArray(selected_ids) = &selection.selection {
+                    if let CustomizationSelection::StringArray(selected_ids) = &selection.selection
+                    {
                         if let Some(options) = &customization.options {
                             for selected_id in selected_ids {
                                 for option in options {
@@ -995,30 +1004,34 @@ pub fn calculate_price_adjustments(
                             }
                         }
                     }
-                },
+                }
                 CustomizationType::Quantity => {
                     if let CustomizationSelection::Number(quantity) = selection.selection {
                         if let Some(unit_price_adj) = customization.unit_price_adjustment {
-                            total_adjustment += unit_price_adj * quantity;
+                            // Get the default quantity
+                            let default_quantity = match &customization.default {
+                                CustomizationDefault::Number(def) => *def,
+                                _ => 0.0, // Fallback if default is not a number
+                            };
+
+                            // Only apply adjustment to the difference from default
+                            total_adjustment += unit_price_adj * (quantity - default_quantity);
                         }
                     }
-                },
+                }
                 // Boolean, Text, and Range don't have price adjustments in this implementation
-                _ => {},
+                _ => {}
             }
         }
     }
-    
+
     Ok(total_adjustment)
 }
 
 /// Extract and update only the customization selections from an OMS URL
-pub fn extract_and_update_selections(
-    url: &str,
-    document: &mut OmsDocument,
-) -> OmsResult<()> {
+pub fn extract_and_update_selections(url: &str, document: &mut OmsDocument) -> OmsResult<()> {
     let params = parse_oms_url(url)?;
-    
+
     // Check if there's a customization preset parameter
     if let Some(preset_id) = params.get("c") {
         // In a real implementation, you'd look up the preset in a database
@@ -1028,50 +1041,52 @@ pub fn extract_and_update_selections(
                 if !customizations.is_empty() {
                     // Get the first customization ID for demonstration
                     let first_customization_id = customizations[0].id.clone();
-                    
+
                     // Create a selection based on the customization type
                     let selection = match customizations[0].r#type {
                         CustomizationType::SingleSelect => {
                             // Use the preset ID as the selected option
                             CustomizationSelection::String(preset_id.clone())
-                        },
+                        }
                         CustomizationType::MultiSelect => {
                             // Use the preset ID as one of the selected options
                             CustomizationSelection::StringArray(vec![preset_id.clone()])
-                        },
+                        }
                         CustomizationType::Quantity => {
                             // Try to parse the preset ID as a number
                             match preset_id.parse::<f64>() {
                                 Ok(val) => CustomizationSelection::Number(val),
                                 Err(_) => CustomizationSelection::Number(1.0), // Default to 1
                             }
-                        },
+                        }
                         CustomizationType::Boolean => {
                             // Try to parse the preset ID as a boolean
                             match preset_id.to_lowercase().as_str() {
                                 "true" | "1" | "yes" => CustomizationSelection::Boolean(true),
                                 _ => CustomizationSelection::Boolean(false),
                             }
-                        },
+                        }
                         CustomizationType::Text => {
                             // Use the preset ID as the text value
                             CustomizationSelection::String(preset_id.clone())
-                        },
+                        }
                         CustomizationType::Range => {
                             // Try to parse the preset ID as a number
                             match preset_id.parse::<f64>() {
                                 Ok(val) => CustomizationSelection::Number(val),
                                 Err(_) => CustomizationSelection::Number(0.0), // Default to 0
                             }
-                        },
+                        }
                     };
-                    
+
                     // Create or update the selected_customizations array
                     let selected = item.selected_customizations.get_or_insert_with(Vec::new);
-                    
+
                     // Check if this customization is already selected
-                    let existing_idx = selected.iter().position(|s| s.customization_id == first_customization_id);
-                    
+                    let existing_idx = selected
+                        .iter()
+                        .position(|s| s.customization_id == first_customization_id);
+
                     if let Some(idx) = existing_idx {
                         // Update existing selection
                         selected[idx].selection = selection;
@@ -1086,7 +1101,7 @@ pub fn extract_and_update_selections(
             }
         }
     }
-    
+
     Ok(())
 }
 
@@ -1097,7 +1112,7 @@ pub fn generate_order(document: &mut OmsDocument, customer_id: Option<&str>) -> 
     let tax_rate = 0.08; // 8% tax rate
     let tax = (subtotal * tax_rate * 100.0).round() / 100.0; // Round to 2 decimal places
     let total = subtotal + tax;
-    
+
     // Create an order
     let order = Order {
         id: Some(format!("order-{}", uuid::Uuid::new_v4())),
@@ -1124,7 +1139,7 @@ pub fn generate_order(document: &mut OmsDocument, customer_id: Option<&str>) -> 
         }),
         delivery: None,
     };
-    
+
     document.set_order(order);
     Ok(())
 }
@@ -1135,21 +1150,21 @@ pub fn is_valid_tap_to_order(document: &OmsDocument) -> bool {
     // 1. A vendor with an ID
     // 2. At least one item
     // 3. Each item must have a base price
-    
+
     if document.vendor.id.is_empty() {
         return false;
     }
-    
+
     if document.items.is_empty() {
         return false;
     }
-    
+
     for item in &document.items {
         if item.base_price.is_none() {
             return false;
         }
     }
-    
+
     true
 }
 
@@ -1157,7 +1172,7 @@ pub fn is_valid_tap_to_order(document: &OmsDocument) -> bool {
 mod tests {
     use super::*;
     use tempfile::tempdir;
-    
+
     #[test]
     fn test_create_minimal_document() {
         let doc = create_minimal_document(
@@ -1167,14 +1182,15 @@ mod tests {
             "test-item",
             "Test Burger",
             "burger",
-        ).unwrap();
-        
+        )
+        .unwrap();
+
         assert_eq!(doc.vendor.id, "test-vendor");
         assert_eq!(doc.vendor.name, "Test Restaurant");
         assert_eq!(doc.items.len(), 1);
         assert_eq!(doc.items[0].name, "Test Burger");
     }
-    
+
     #[test]
     fn test_create_template() {
         // Test restaurant template
@@ -1182,24 +1198,24 @@ mod tests {
         assert_eq!(restaurant.vendor.r#type, "restaurant");
         assert_eq!(restaurant.items.len(), 1);
         assert_eq!(restaurant.items[0].name, "New York Strip Steak");
-        
+
         // Test coffee shop template
         let coffee_shop = create_template("coffee-shop").unwrap();
         assert_eq!(coffee_shop.vendor.r#type, "coffee-shop");
         assert_eq!(coffee_shop.items.len(), 2);
         assert_eq!(coffee_shop.items[0].name, "Latte");
         assert_eq!(coffee_shop.items[1].name, "Cappuccino");
-        
+
         // Test invalid template
         let result = create_template("invalid");
         assert!(result.is_err());
     }
-    
+
     #[test]
     fn test_save_and_load_document() {
         let dir = tempdir().unwrap();
         let file_path = dir.path().join("test.omenu");
-        
+
         let doc = create_minimal_document(
             "test-vendor",
             "Test Restaurant",
@@ -1207,24 +1223,25 @@ mod tests {
             "test-item",
             "Test Burger",
             "burger",
-        ).unwrap();
-        
+        )
+        .unwrap();
+
         // Save the document
         save_document_to_file(&doc, &file_path).unwrap();
-        
+
         // Load the document
         let loaded_doc = load_document_from_file(&file_path).unwrap();
-        
+
         assert_eq!(doc.vendor.id, loaded_doc.vendor.id);
         assert_eq!(doc.items[0].name, loaded_doc.items[0].name);
     }
-    
+
     #[test]
     fn test_calculate_price_adjustments() {
         // Create an item with customizations
         let mut doc = create_template("coffee-shop").unwrap();
         let item = &doc.items[0]; // Latte
-        
+
         // Create some selections
         let selections = vec![
             SelectedCustomization {
@@ -1247,10 +1264,10 @@ mod tests {
                 ]),
             },
         ];
-        
+
         // Calculate price adjustments
         let adjustment = calculate_price_adjustments(item, &selections).unwrap();
-        
+
         // Expected adjustment:
         // Size large: +0.50
         // Almond milk: +0.75
@@ -1260,28 +1277,28 @@ mod tests {
         // Total: +3.00
         assert_eq!(adjustment, 3.00);
     }
-    
+
     #[test]
     fn test_extract_and_update_selections() {
         let mut doc = create_template("coffee-shop").unwrap();
-        
+
         // Test URL with customization preset
         let url = "omenu://order?v=coffee-shop-template&i=latte&c=large";
         extract_and_update_selections(url, &mut doc).unwrap();
-        
+
         // Verify that a selection was added
         let item = &doc.items[0]; // Latte
         assert!(item.selected_customizations.is_some());
         let selections = item.selected_customizations.as_ref().unwrap();
         assert_eq!(selections.len(), 1);
         assert_eq!(selections[0].customization_id, "size");
-        
+
         match &selections[0].selection {
             CustomizationSelection::String(val) => assert_eq!(val, "large"),
             _ => panic!("Unexpected selection type"),
         }
     }
-    
+
     #[test]
     fn test_generate_order() {
         let mut doc = create_minimal_document(
@@ -1291,30 +1308,31 @@ mod tests {
             "test-item",
             "Test Burger",
             "burger",
-        ).unwrap();
-        
+        )
+        .unwrap();
+
         // Set a price for the item
         doc.items[0].base_price = Some(10.0);
-        
+
         // Generate an order
         generate_order(&mut doc, Some("test-customer")).unwrap();
-        
+
         // Verify the order
         assert!(doc.order.is_some());
         let order = doc.order.as_ref().unwrap();
         assert_eq!(order.r#type, Some(OrderType::Pickup));
-        
+
         // Verify payment details
         let payment = order.payment.as_ref().unwrap();
         assert_eq!(payment.subtotal, Some(10.0));
         assert_eq!(payment.tax, Some(0.8)); // 8% of 10.0
         assert_eq!(payment.total, 10.8);
-        
+
         // Verify customer
         let customer = order.customer.as_ref().unwrap();
         assert_eq!(customer.id, Some("test-customer".to_string()));
     }
-    
+
     #[test]
     fn test_is_valid_tap_to_order() {
         // Valid document
@@ -1325,11 +1343,12 @@ mod tests {
             "test-item",
             "Test Burger",
             "burger",
-        ).unwrap();
-        
+        )
+        .unwrap();
+
         doc.items[0].base_price = Some(10.0);
         assert!(is_valid_tap_to_order(&doc));
-        
+
         // Invalid document: no base price
         let doc_no_price = create_minimal_document(
             "test-vendor",
@@ -1338,15 +1357,16 @@ mod tests {
             "test-item",
             "Test Burger",
             "burger",
-        ).unwrap();
-        
+        )
+        .unwrap();
+
         assert!(!is_valid_tap_to_order(&doc_no_price));
-        
+
         // Invalid document: no items
         let mut doc_no_items = doc.clone();
         doc_no_items.items.clear();
         assert!(!is_valid_tap_to_order(&doc_no_items));
-        
+
         // Invalid document: no vendor ID
         let mut doc_no_vendor_id = doc;
         doc_no_vendor_id.vendor.id = "".to_string();

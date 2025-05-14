@@ -13,16 +13,18 @@ pub fn parse_oms_url(url: &str) -> OmsResult<HashMap<String, String>> {
         return Err(OmsError::InvalidOmsUrl(format!("URL must start with {}", OMS_URL_SCHEME)));
     }
     
-    // Parse the URL
-    let url_obj = Url::parse(url)
-        .map_err(|e| OmsError::InvalidOmsUrl(format!("Failed to parse OMS URL: {}", e)))?;
-    
-    // Extract the action from the path
-    let action = url_obj.path().trim_start_matches('/');
+    // Parse the URL manually to extract the action
+    let without_scheme = url.strip_prefix(OMS_URL_SCHEME).unwrap_or("");
+    let parts: Vec<&str> = without_scheme.split('?').collect();
+    let action = parts[0];
     
     // Create the result map
     let mut params = HashMap::new();
     params.insert("action".to_string(), action.to_string());
+    
+    // Parse the URL for query parameters
+    let url_obj = Url::parse(&format!("http://example.com/{}", without_scheme))
+        .map_err(|e| OmsError::InvalidOmsUrl(format!("Failed to parse OMS URL: {}", e)))?;
     
     // Extract query parameters
     for (key, value) in url_obj.query_pairs() {
